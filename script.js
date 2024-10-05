@@ -3,7 +3,7 @@ let currentPlayer;
 let rankedMode;
 let rank;
 let rankPoints;
-const botLevelIncrease = 2; // Points required to make bot harder
+const botLevelIncrease = 2; // Points required to make the bot harder
 const botDelay = 1000; // Delay for bot move
 
 const ranks = {
@@ -17,13 +17,29 @@ const ranks = {
     Unreal: ['Unreal']
 };
 
+// Load saved rank from local storage
+function loadRank() {
+    const savedRank = localStorage.getItem('rank');
+    if (savedRank) {
+        rank = savedRank;
+    } else {
+        rank = ranks.Bronze[0]; // Start at Bronze I if no saved rank
+    }
+}
+
+// Save rank to local storage
+function saveRank() {
+    localStorage.setItem('rank', rank);
+}
+
 function init() {
+    loadRank();
     board = Array(9).fill(null);
     currentPlayer = 'X';
     rankedMode = false;
-    rank = ranks.Bronze[0]; // Start at Bronze I
     rankPoints = 0;
     updateBoard();
+    document.getElementById('rank').innerText = `Rank: ${rank}`;
 }
 
 function updateBoard() {
@@ -32,7 +48,6 @@ function updateBoard() {
     board.forEach((cell, index) => {
         const cellElement = document.createElement('div');
         cellElement.className = `cell ${cell ? cell.toLowerCase() : ''}`;
-        cellElement.innerText = cell;
         cellElement.onclick = () => handleClick(index);
         boardElement.appendChild(cellElement);
     });
@@ -50,7 +65,7 @@ function handleClick(index) {
         showAlert('It\'s a draw!');
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        if (currentPlayer === 'O') {
+        if (currentPlayer === 'O' && rankedMode) {
             setTimeout(botPlay, botDelay); // Delay bot move
         }
     }
@@ -120,6 +135,7 @@ function updateRank(winner) {
                     }
                 }
             }
+            saveRank(); // Save new rank
             alert('You ranked up!');
         }
         document.getElementById('rank').innerText = `Rank: ${rank}`;
@@ -141,9 +157,14 @@ function playAgain() {
     document.querySelectorAll('.alert').forEach(alert => alert.remove()); // Remove any existing alerts
 }
 
-// Settings and animation styles
+// Settings for ranked/unranked and profile picture
 document.getElementById('ranked-mode').addEventListener('change', (e) => {
     rankedMode = e.target.checked;
+});
+
+document.getElementById('play-friend').addEventListener('click', () => {
+    currentPlayer = prompt("Enter Player O's Name (Emoji for Profile Picture):") || 'O';
+    init();
 });
 
 document.getElementById('settings-button').addEventListener('click', () => {
@@ -157,10 +178,12 @@ document.querySelector('.close').addEventListener('click', () => {
 document.getElementById('save-settings').addEventListener('click', () => {
     const boardColor = document.getElementById('color').value;
     const textColor = document.getElementById('text-color').value;
+    const playerEmoji = document.getElementById('profile-pic').value; // Get emoji from input
     document.querySelector('.board').style.backgroundColor = boardColor;
     document.querySelectorAll('.cell').forEach(cell => {
         cell.style.color = textColor;
     });
+    document.getElementById('playerO').innerText = playerEmoji; // Update Player O's emoji
     document.getElementById('settings-modal').style.display = 'none';
 });
 
@@ -172,4 +195,5 @@ playAgainButton.onclick = playAgain;
 document.body.appendChild(playAgainButton);
 
 init();
+
 
