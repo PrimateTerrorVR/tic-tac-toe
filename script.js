@@ -4,6 +4,7 @@ let rankedMode;
 let rank;
 let rankPoints;
 const botLevelIncrease = 2; // Points required to make bot harder
+const botDelay = 1000; // Delay for bot move
 
 function init() {
     board = Array(9).fill(null);
@@ -19,7 +20,7 @@ function updateBoard() {
     boardElement.innerHTML = '';
     board.forEach((cell, index) => {
         const cellElement = document.createElement('div');
-        cellElement.className = 'cell';
+        cellElement.className = `cell ${cell ? cell.toLowerCase() : ''}`;
         cellElement.innerText = cell;
         cellElement.onclick = () => handleClick(index);
         boardElement.appendChild(cellElement);
@@ -30,6 +31,7 @@ function updateBoard() {
 function handleClick(index) {
     if (board[index] || checkWinner()) return;
     board[index] = currentPlayer;
+    animateMove(index);
     if (checkWinner()) {
         alert(`Player ${currentPlayer} wins!`);
         updateRank(currentPlayer);
@@ -37,15 +39,26 @@ function handleClick(index) {
         alert('It\'s a draw!');
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        if (currentPlayer === 'O') botPlay();
+        if (currentPlayer === 'O') {
+            setTimeout(botPlay, botDelay); // Delay bot move
+        }
     }
     updateBoard();
+}
+
+function animateMove(index) {
+    const cell = document.querySelector(`.cell:nth-child(${index + 1})`);
+    cell.classList.add('animate');
+    setTimeout(() => {
+        cell.classList.remove('animate');
+    }, 300);
 }
 
 function botPlay() {
     let availableSpots = board.map((cell, index) => cell === null ? index : null).filter(index => index !== null);
     let botMove = availableSpots[Math.floor(Math.random() * availableSpots.length)];
     board[botMove] = currentPlayer;
+    animateMove(botMove);
     if (checkWinner()) {
         alert(`Player ${currentPlayer} wins!`);
         updateRank(currentPlayer);
@@ -105,5 +118,8 @@ document.getElementById('save-settings').addEventListener('click', () => {
     });
     document.getElementById('settings-modal').style.display = 'none';
 });
+
+init();
+
 
 init();
