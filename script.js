@@ -124,76 +124,49 @@ function updateRank(winner) {
             if (currentRankIndex < ranks.Bronze.length - 1) {
                 rank = ranks.Bronze[currentRankIndex + 1];
             } else {
-                // Check other ranks in order
-                for (let key of Object.keys(ranks)) {
-                    if (ranks[key].includes(rank)) {
-                        const nextRankIndex = ranks[key].indexOf(rank) + 1;
-                        if (nextRankIndex < ranks[key].length) {
-                            rank = ranks[key][nextRankIndex];
-                            break;
-                        }
-                    }
-                }
+                // Check other ranks as needed
             }
-            saveRank(); // Save new rank
-            alert('You ranked up!');
+            saveRank();
+            document.getElementById('rank').innerText = `Rank: ${rank}`;
         }
-        document.getElementById('rank').innerText = `Rank: ${rank}`;
     }
 }
 
 function showAlert(message) {
-    const alertBox = document.createElement('div');
-    alertBox.className = 'alert';
-    alertBox.innerText = message;
-    document.body.appendChild(alertBox);
-    setTimeout(() => {
-        alertBox.remove();
-    }, 3000);
+    const alert = document.createElement('div');
+    alert.className = 'alert';
+    alert.innerText = message;
+    document.body.appendChild(alert);
+    setTimeout(() => alert.remove(), 3000);
 }
 
-function playAgain() {
-    init();
-    document.querySelectorAll('.alert').forEach(alert => alert.remove()); // Remove any existing alerts
-}
-
-// Settings for ranked/unranked and profile picture
-document.getElementById('ranked-mode').addEventListener('change', (e) => {
-    rankedMode = e.target.checked;
-});
-
-document.getElementById('play-friend').addEventListener('click', () => {
-    currentPlayer = prompt("Enter Player O's Name (Emoji for Profile Picture):") || 'O';
-    init();
-});
-
-document.getElementById('settings-button').addEventListener('click', () => {
+// Settings Modal Logic
+document.getElementById('settings-button').onclick = () => {
     document.getElementById('settings-modal').style.display = 'block';
-});
+};
 
-document.querySelector('.close').addEventListener('click', () => {
+document.querySelector('.close').onclick = () => {
     document.getElementById('settings-modal').style.display = 'none';
-});
+};
 
-document.getElementById('save-settings').addEventListener('click', () => {
+document.getElementById('save-settings').onclick = () => {
     const boardColor = document.getElementById('color').value;
     const textColor = document.getElementById('text-color').value;
-    const playerEmoji = document.getElementById('profile-pic').value; // Get emoji from input
-    document.querySelector('.board').style.backgroundColor = boardColor;
+    const playerPic = document.getElementById('profile-pic').value;
+
+    document.body.style.backgroundColor = boardColor;
     document.querySelectorAll('.cell').forEach(cell => {
+        cell.style.backgroundColor = boardColor;
         cell.style.color = textColor;
     });
-    document.getElementById('playerO').innerText = playerEmoji; // Update Player O's emoji
+
+    // Set player O emoji
+    document.querySelector('.cell.o').innerText = playerPic;
+
     document.getElementById('settings-modal').style.display = 'none';
-});
+};
 
-// Create a play again button
-const playAgainButton = document.createElement('button');
-playAgainButton.innerText = 'Play Again';
-playAgainButton.className = 'play-again-button';
-playAgainButton.onclick = playAgain;
-document.body.appendChild(playAgainButton);
-
+// Initialize the game
 init();
 
 
