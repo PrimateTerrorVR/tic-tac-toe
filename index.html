@@ -23,6 +23,30 @@
             <h2>Settings</h2>
             <label for="profile-pic">Change Profile Picture (Emoji):</label>
             <input type="text" id="profile-pic" placeholder="Enter Emoji">
+            
+            <h3>Game Mode:</h3>
+            <select id="game-mode">
+                <option value="ai-normal">Play AI - Normal</option>
+                <option value="ai-ranked">Play AI - Ranked</option>
+                <option value="friend">Play vs Friend</option>
+            </select>
+            
+            <h3>Animations:</h3>
+            <label><input type="checkbox" id="toggle-animations"> Enable Move Animations</label>
+            
+            <h3>Board Style:</h3>
+            <label><input type="radio" name="board-style" value="curved" checked> Curved Edges</label>
+            <label><input type="radio" name="board-style" value="straight"> Straight Edges</label>
+            
+            <h3>Colors:</h3>
+            <label for="x-color">X Color:</label>
+            <input type="color" id="x-color" value="#ff0000">
+            <label for="o-color">O Color:</label>
+            <input type="color" id="o-color" value="#0000ff">
+
+            <h3>Other Settings:</h3>
+            <label><input type="checkbox" id="show-border"> Keep Borders on Click</label>
+            <label><input type="checkbox" id="blur-background"> Blur Background on Settings Open</label>
             <button id="save-settings" class="custom-button">Save Settings</button>
         </div>
     </div>
