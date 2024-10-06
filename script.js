@@ -4,7 +4,6 @@ let rankedMode;
 let rank;
 let rankPoints;
 const botDelay = 1000; // Delay for bot move
-let toggleAnimations = true; // Animation toggle
 
 // Ranks setup
 const ranks = {
@@ -40,7 +39,7 @@ function init() {
     document.getElementById('rank').innerText = `Rank: ${rank}`;
     document.getElementById('play-again').style.display = 'none'; // Hide play again button
     document.getElementById('settings-modal').style.display = 'none'; // Hide settings
-    resetBlur();
+    document.getElementById('online-status').innerText = ''; // Reset online status
 }
 
 // Update board display
@@ -62,8 +61,6 @@ function handleClick(index, cellElement) {
 
     board[index] = currentPlayer;
     cellElement.classList.add('clicked'); // Add clicked class for border
-
-    // Draw X or O based on the current player
     drawMove(index, currentPlayer);
 
     if (checkWinner()) {
@@ -76,7 +73,10 @@ function handleClick(index, cellElement) {
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         if (currentPlayer === 'O' && rankedMode) {
-            setTimeout(botPlay, botDelay); // Delay bot move
+            setTimeout(() => {
+                showThinkingMessage(); // Show thinking message for bot
+                botPlay();
+            }, botDelay);
         }
     }
     updateBoard();
@@ -86,21 +86,19 @@ function handleClick(index, cellElement) {
 function drawMove(index, player) {
     const cell = document.querySelector(`.cell:nth-child(${index + 1})`);
     if (player === 'X') {
-        if (toggleAnimations) {
-            // Draw first diagonal line
-            setTimeout(() => {
-                cell.innerHTML = '<div class="x-part"></div>';
-            }, 0);
-            // Draw second diagonal line after delay
-            setTimeout(() => {
-                cell.innerHTML += '<div class="x-part"></div>'; // Add second diagonal
-            }, 400);
-        } else {
-            cell.innerHTML = '<div class="x-part"></div>'; // Draw X immediately
-        }
+        cell.innerHTML = '<div class="x-part"></div>'; // Draw X
     } else if (player === 'O') {
         cell.innerHTML = '<div class="o"></div>'; // Draw O
     }
+}
+
+// Show thinking message for bot
+function showThinkingMessage() {
+    const statusElement = document.getElementById('status');
+    statusElement.innerText = 'Bot is thinking...'; // Update status message
+    setTimeout(() => {
+        statusElement.innerText = `Current Player: ${currentPlayer}`; // Reset after delay
+    }, 1000);
 }
 
 // Bot plays a move
@@ -163,12 +161,6 @@ function getNextRank() {
     return null;
 }
 
-// Reset background blur
-function resetBlur() {
-    const body = document.body;
-    body.classList.remove('blurred');
-}
-
 // Event listeners for play again and settings
 document.getElementById('play-again').onclick = () => {
     init();
@@ -176,37 +168,19 @@ document.getElementById('play-again').onclick = () => {
 
 document.getElementById('settings-button').onclick = () => {
     document.getElementById('settings-modal').style.display = 'block';
-    const body = document.body;
-    body.classList.add('blurred'); // Apply blur effect
+    // Removed blur effect on settings
 };
 
 document.getElementById('save-settings').onclick = () => {
     const emoji = document.getElementById('profile-pic').value;
     const gameMode = document.getElementById('game-mode').value;
-    toggleAnimations = document.getElementById('toggle-animations').checked;
     rankedMode = gameMode === 'ai-ranked';
 
     if (emoji) {
         alert(`Profile picture changed to: ${emoji}`);
     }
-    
-    // Reset blur when settings are saved
-    resetBlur();
-    document.getElementById('settings-modal').style.display = 'none';
-};
 
-// Close modal
-document.querySelector('.close').onclick = () => {
     document.getElementById('settings-modal').style.display = 'none';
-    resetBlur(); // Reset blur when modal is closed
-};
-
-// Close modal when clicking outside of it
-window.onclick = (event) => {
-    if (event.target === document.getElementById('settings-modal')) {
-        document.getElementById('settings-modal').style.display = 'none';
-        resetBlur(); // Reset blur when modal is closed
-    }
 };
 
 // Initialize the game on page load
