@@ -1,123 +1,136 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Titan One', cursive;
+    font-family: 'Titan One', cursive; /* Custom font */
     background-color: #f0f0f0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
 }
 
-#game-container {
-    text-align: center;
-    background-color: #ffffff;
+header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-#board {
+h1 {
+    margin: 0;
+}
+
+.board {
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
     gap: 5px;
-    margin: 20px auto;
+    margin: 20px 0;
 }
 
 .cell {
-    width: 100px;
-    height: 100px;
-    background-color: #e0e0e0;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    border: 2px solid #3f51b5; /* Default border color */
+    font-size: 24px;
     cursor: pointer;
-    border-radius: 5px; /* Curved edges by default */
+    background-color: white;
 }
 
-.cell.clicked {
-    border: 2px solid #007bff; /* Border stays after clicked */
+.clicked {
+    pointer-events: none; /* Prevent further clicks */
 }
 
 .x-part {
-    width: 2px;
+    width: 100%;
     height: 100%;
-    background: #ff5722;
     position: relative;
 }
-.x-part:before, .x-part:after {
-    content: '';
-    width: 100%;
-    height: 2px;
-    background: #ff5722;
-    position: absolute;
-}
+
 .x-part:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 10px solid #3f51b5; /* Default color of X */
     transform: rotate(45deg);
 }
+
 .x-part:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 10px solid #3f51b5; /* Default color of X */
     transform: rotate(-45deg);
 }
 
 .o {
     width: 100%;
     height: 100%;
+    border: 10px solid #3f51b5; /* Outer border color */
     border-radius: 50%;
-    background: #3f51b5;
+    box-sizing: border-box; /* Ensures padding doesn't affect total width/height */
+    position: relative;
 }
 
-#play-again, #settings-button, #save-settings, #close-settings {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #007bff;
+.o:before {
+    content: '';
+    position: absolute;
+    top: 10px; /* Adjust to create a hollow center */
+    left: 10px; /* Adjust to create a hollow center */
+    right: 10px; /* Adjust to create a hollow center */
+    bottom: 10px; /* Adjust to create a hollow center */
+    background: #f0f0f0; /* Fill the hollow center with the background color */
+    border-radius: 50%;
+}
+
+button {
+    background-color: #3f51b5; /* Button color */
     color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 1em;
-    transition: background-color 0.3s;
+    font-size: 16px;
 }
 
-#play-again:hover, #settings-button:hover, #save-settings:hover, #close-settings:hover {
-    background-color: #0056b3;
+button:hover {
+    background-color: #5c6bc0; /* Darker on hover */
 }
 
-#settings-modal {
-    display: none;
+.modal {
+    display: none; /* Hidden by default */
     position: fixed;
-    top: 0;
+    z-index: 1;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+    backdrop-filter: blur(5px); /* Blur background */
 }
 
-#settings-modal h2 {
-    color: #fff;
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
 }
 
-#settings-modal label {
+label {
     display: block;
-    margin: 10px 0;
-    color: #fff;
+    margin: 10px 0 5px;
 }
 
-#settings-modal input, #settings-modal select {
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-#online-status {
-    margin-top: 10px;
-    color: #007bff;
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
