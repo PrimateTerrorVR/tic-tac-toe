@@ -1,53 +1,48 @@
-<!DOCTYPE html>
+r<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
     <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <title>Tic Tac Toe</title>
 </head>
 <body>
     <div class="container">
         <h1>Tic Tac Toe</h1>
+        <div class="board" id="board">
+            <div class="cell" id="0"></div>
+            <div class="cell" id="1"></div>
+            <div class="cell" id="2"></div>
+            <div class="cell" id="3"></div>
+            <div class="cell" id="4"></div>
+            <div class="cell" id="5"></div>
+            <div class="cell" id="6"></div>
+            <div class="cell" id="7"></div>
+            <div class="cell" id="8"></div>
+        </div>
+        <button id="playAgain" class="custom-button">Play Again</button>
         <div id="notifications"></div>
-        <div id="board" class="board"></div>
-        <button id="play-again" class="custom-button">Play Again</button>
-        <button id="settings-button" class="custom-button">Settings</button>
-        <button id="create-room" class="custom-button">Create Room</button>
-        <button id="join-room" class="custom-button">Join Room</button>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-settings" class="close">&times;</span>
+        <div id="settings">
             <h2>Settings</h2>
-            <label for="color-x">Color for X:</label>
-            <input type="color" id="color-x" value="#ff0000">
-            <label for="color-o">Color for O:</label>
-            <input type="color" id="color-o" value="#0000ff">
-            <label for="border-color">Border Color:</label>
-            <input type="color" id="border-color" value="#000000">
-            <label for="background-color">Background Color:</label>
-            <input type="color" id="background-color" value="#ffffff">
-            <label for="ranked-mode">Ranked Mode:</label>
-            <input type="checkbox" id="ranked-mode">
-            <button id="save-settings" class="custom-button">Save Settings</button>
+            <label for="aiMode">AI Mode:</label>
+            <select id="aiMode">
+                <option value="normal">Normal</option>
+                <option value="hard">Hard</option>
+            </select>
+            <label for="boardStyle">Board Style:</label>
+            <select id="boardStyle">
+                <option value="curved">Curved</option>
+                <option value="straight">Straight</option>
+            </select>
+            <label for="backgroundColor">Background Color:</label>
+            <input type="color" id="backgroundColor" value="#e0e0e0">
+            <label for="textColor">Text Color:</label>
+            <input type="color" id="textColor" value="#333333">
+            <button id="saveSettings" class="custom-button">Save Settings</button>
+            <button id="resetSettings" class="custom-button">Reset to Default</button>
         </div>
     </div>
-
-    <!-- Room Modal -->
-    <div id="room-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-room" class="close">&times;</span>
-            <h2>Create/Join Room</h2>
-            <input type="text" id="room-id" placeholder="Room ID" required>
-            <button id="create-room-confirm" class="custom-button">Create Room</button>
-            <button id="join-room-confirm" class="custom-button">Join Room</button>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
