@@ -3,37 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Tic Tac Toe</title>
 </head>
 <body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div id="status"></div>
+        <div id="board" class="board"></div>
+        <button id="play-again" class="custom-button">Play Again</button>
+        <button id="settings-button" class="custom-button">Settings</button>
+        <div id="rank">Rank: Bronze I</div>
+    </div>
+
+    <!-- Settings Modal -->
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Settings</h2>
-            <label for="board-style">Board Style:</label>
-            <select id="board-style">
-                <option value="curved">Curved Edges</option>
-                <option value="sharp">Sharp Edges</option>
-            </select><br>
-            <label for="color">Board Color:</label>
-            <input type="color" id="color" value="#ffffff"><br>
-            <label for="text-color">Text Color:</label>
-            <input type="color" id="text-color" value="#000000"><br>
-            <label for="profile-pic">Player O Emoji:</label>
-            <input type="text" id="profile-pic" placeholder="Enter an emoji"><br>
-            <button id="save-settings" class="custom-button">Save</button>
+            <label for="profile-pic">Change Profile Picture (Emoji):</label>
+            <input type="text" id="profile-pic" placeholder="Enter Emoji">
+            <button id="save-settings" class="custom-button">Save Settings</button>
         </div>
     </div>
 
-    <h1>Tic Tac Toe</h1>
-    <div id="rank">Rank: </div>
-    <label><input type="checkbox" id="ranked-mode"> Ranked Mode</label>
-    <button id="play-friend" class="custom-button">Play vs Friend</button>
-    <div id="board" class="board"></div>
-    <button id="play-again" class="custom-button" style="display: none;">Play Again</button>
-    <div id="status"></div>
-    <button id="settings-button" class="custom-button">Settings</button>
     <script src="script.js"></script>
 </body>
 </html>
