@@ -3,54 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <title>Tic Tac Toe</title>
 </head>
 <body>
-    <div class="container">
+    <div id="game-container">
         <h1>Tic Tac Toe</h1>
-        <div id="status"></div>
-        <div id="board" class="board"></div>
-        <button id="play-again" class="custom-button">Play Again</button>
-        <button id="settings-button" class="custom-button">Settings</button>
         <div id="rank">Rank: Bronze I</div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+        <div id="status">Current Player: X</div>
+        <div id="board"></div>
+        <button id="play-again">Play Again</button>
+        <button id="settings-button">Settings</button>
+        
+        <div id="settings-modal">
             <h2>Settings</h2>
-            <label for="profile-pic">Change Profile Picture (Emoji):</label>
-            <input type="text" id="profile-pic" placeholder="Enter Emoji">
-            
-            <h3>Game Mode:</h3>
+            <label for="profile-pic">Profile Picture (Emoji):</label>
+            <input type="text" id="profile-pic" placeholder="😊">
+            <label for="game-mode">Game Mode:</label>
             <select id="game-mode">
-                <option value="ai-normal">Play AI - Normal</option>
-                <option value="ai-ranked">Play AI - Ranked</option>
+                <option value="ai-normal">Play vs AI (Normal)</option>
+                <option value="ai-ranked">Play vs AI (Ranked)</option>
                 <option value="friend">Play vs Friend</option>
             </select>
-            
-            <h3>Animations:</h3>
-            <label><input type="checkbox" id="toggle-animations"> Enable Move Animations</label>
-            
-            <h3>Board Style:</h3>
-            <label><input type="radio" name="board-style" value="curved" checked> Curved Edges</label>
-            <label><input type="radio" name="board-style" value="straight"> Straight Edges</label>
-            
-            <h3>Colors:</h3>
-            <label for="x-color">X Color:</label>
-            <input type="color" id="x-color" value="#ff0000">
-            <label for="o-color">O Color:</label>
-            <input type="color" id="o-color" value="#0000ff">
-
-            <h3>Other Settings:</h3>
-            <label><input type="checkbox" id="show-border"> Keep Borders on Click</label>
-            <label><input type="checkbox" id="blur-background"> Blur Background on Settings Open</label>
-            <button id="save-settings" class="custom-button">Save Settings</button>
+            <button id="save-settings">Save Settings</button>
+            <button id="close-settings">Close</button>
         </div>
+        
+        <div id="online-status"></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
