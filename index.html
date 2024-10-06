@@ -4,52 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
 </head>
 <body>
-    <header>
+    <div id="container">
         <h1>Tic Tac Toe</h1>
-        <button id="settings-button">Settings</button>
-    </header>
-    <main>
-        <div id="board" class="board"></div>
-        <button id="play-again">Play Again</button>
-    </main>
+        <div id="board"></div>
+        <button id="play-again" class="custom-button">Play Again</button>
+        <button id="settings-button" class="custom-button">Settings</button>
+    </div>
+
+    <!-- Settings Modal -->
     <div id="settings-modal" class="modal">
         <div class="modal-content">
-            <span id="close-settings">&times;</span>
+            <span id="close-settings" class="close">&times;</span>
             <h2>Settings</h2>
-            <label for="profile-pic">Change Profile Picture (Emoji):</label>
+            <label for="profile-pic">Profile Picture (Emoji):</label>
             <input type="text" id="profile-pic" value="😀">
-
             <label for="game-mode">Game Mode:</label>
             <select id="game-mode">
-                <option value="ai-normal">Play vs AI Normal</option>
-                <option value="ai-ranked">Play vs AI Ranked</option>
+                <option value="ai-normal">AI Normal</option>
+                <option value="ai-ranked">AI Ranked</option>
                 <option value="friend">Play vs Friend</option>
             </select>
-
-            <label for="animation-style">Animation Style:</label>
-            <select id="animation-style">
-                <option value="none">None</option>
-                <option value="drawing">Drawing</option>
-            </select>
-
-            <label for="color-x">Color for X:</label>
+            <label for="color-x">X Color:</label>
             <input type="color" id="color-x" value="#3f51b5">
-
-            <label for="color-o">Color for O:</label>
+            <label for="color-o">O Color:</label>
             <input type="color" id="color-o" value="#3f51b5">
-
+            <label for="border-color">Border Color:</label>
+            <input type="color" id="border-color" value="#3f51b5">
             <label for="background-color">Background Color:</label>
             <input type="color" id="background-color" value="#f0f0f0">
-
-            <label for="border-color">Cell Border Color:</label>
-            <input type="color" id="border-color" value="#3f51b5">
-
-            <button id="save-settings">Save Settings</button>
+            <button id="save-settings" class="custom-button">Save Settings</button>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
