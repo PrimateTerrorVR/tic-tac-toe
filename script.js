@@ -4,6 +4,7 @@ let rankedMode;
 let rank;
 let rankPoints;
 const botDelay = 1000; // Delay for bot move
+let toggleAnimations = true; // Animation toggle
 
 // Ranks setup
 const ranks = {
@@ -38,6 +39,8 @@ function init() {
     updateBoard();
     document.getElementById('rank').innerText = `Rank: ${rank}`;
     document.getElementById('play-again').style.display = 'none'; // Hide play again button
+    document.getElementById('settings-modal').style.display = 'none'; // Hide settings
+    resetBlur();
 }
 
 // Update board display
@@ -47,17 +50,22 @@ function updateBoard() {
     board.forEach((cell, index) => {
         const cellElement = document.createElement('div');
         cellElement.className = `cell ${cell ? cell.toLowerCase() : ''}`;
-        cellElement.onclick = () => handleClick(index);
+        cellElement.onclick = () => handleClick(index, cellElement);
         boardElement.appendChild(cellElement);
     });
     document.getElementById('status').innerText = `Current Player: ${currentPlayer}`;
 }
 
 // Handle cell click
-function handleClick(index) {
+function handleClick(index, cellElement) {
     if (board[index] || checkWinner()) return;
+
     board[index] = currentPlayer;
+    cellElement.classList.add('clicked'); // Add clicked class for border
+
+    // Draw X or O based on the current player
     drawMove(index, currentPlayer);
+
     if (checkWinner()) {
         showAlert(`Player ${currentPlayer} wins!`);
         updateRank(currentPlayer);
@@ -78,43 +86,41 @@ function handleClick(index) {
 function drawMove(index, player) {
     const cell = document.querySelector(`.cell:nth-child(${index + 1})`);
     if (player === 'X') {
-        cell.innerHTML = ''; // Clear cell first
-        setTimeout(() => {
-            cell.innerHTML = '<div class="x-part diagonal"></div>'; // First diagonal
-        }, 0);
-        setTimeout(() => {
-            cell.innerHTML += '<div class="x-part diagonal second"></div>'; // Second diagonal
-        }, 400); // Draw second diagonal after 400ms
+        if (toggleAnimations) {
+            // Draw first diagonal line
+            setTimeout(() => {
+                cell.innerHTML = '<div class="x-part"></div>';
+            }, 0);
+            // Draw second diagonal line after delay
+            setTimeout(() => {
+                cell.innerHTML += '<div class="x-part"></div>'; // Add second diagonal
+            }, 400);
+        } else {
+            cell.innerHTML = '<div class="x-part"></div>'; // Draw X immediately
+        }
     } else if (player === 'O') {
-        cell.innerHTML = '<div class="o"></div>'; // Draw O directly
+        cell.innerHTML = '<div class="o"></div>'; // Draw O
     }
 }
 
-// Bot plays against the player
+// Bot plays a move
 function botPlay() {
-    const availableSpots = board.map((cell, index) => cell === null ? index : null).filter(index => index !== null);
-    const botMove = availableSpots[Math.floor(Math.random() * availableSpots.length)];
-    board[botMove] = currentPlayer;
-    drawMove(botMove, currentPlayer);
-    if (checkWinner()) {
-        showAlert(`Player ${currentPlayer} wins!`);
-        updateRank(currentPlayer);
-        document.getElementById('play-again').style.display = 'block'; // Show play again button
-    } else if (board.every(cell => cell)) {
-        showAlert('It\'s a draw!');
-        document.getElementById('play-again').style.display = 'block'; // Show play again button
-    } else {
-        currentPlayer = 'X';
-    }
-    updateBoard();
+    const emptyCells = board.map((cell, index) => (cell === null ? index : null)).filter(val => val !== null);
+    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    handleClick(randomIndex, document.querySelector(`.cell:nth-child(${randomIndex + 1})`));
 }
 
-// Check if there's a winner
+// Check for winner
 function checkWinner() {
     const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
     ];
     for (const combination of winningCombinations) {
         const [a, b, c] = combination;
@@ -157,6 +163,12 @@ function getNextRank() {
     return null;
 }
 
+// Reset background blur
+function resetBlur() {
+    const body = document.body;
+    body.classList.remove('blurred');
+}
+
 // Event listeners for play again and settings
 document.getElementById('play-again').onclick = () => {
     init();
@@ -164,25 +176,36 @@ document.getElementById('play-again').onclick = () => {
 
 document.getElementById('settings-button').onclick = () => {
     document.getElementById('settings-modal').style.display = 'block';
+    const body = document.body;
+    body.classList.add('blurred'); // Apply blur effect
 };
 
 document.getElementById('save-settings').onclick = () => {
     const emoji = document.getElementById('profile-pic').value;
+    const gameMode = document.getElementById('game-mode').value;
+    toggleAnimations = document.getElementById('toggle-animations').checked;
+    rankedMode = gameMode === 'ai-ranked';
+
     if (emoji) {
         alert(`Profile picture changed to: ${emoji}`);
-        document.getElementById('settings-modal').style.display = 'none';
     }
+    
+    // Reset blur when settings are saved
+    resetBlur();
+    document.getElementById('settings-modal').style.display = 'none';
 };
 
 // Close modal
 document.querySelector('.close').onclick = () => {
     document.getElementById('settings-modal').style.display = 'none';
+    resetBlur(); // Reset blur when modal is closed
 };
 
 // Close modal when clicking outside of it
 window.onclick = (event) => {
     if (event.target === document.getElementById('settings-modal')) {
         document.getElementById('settings-modal').style.display = 'none';
+        resetBlur(); // Reset blur when modal is closed
     }
 };
 
