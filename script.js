@@ -4,12 +4,14 @@ const settingsButton = document.getElementById('settings-button');
 const settingsModal = document.getElementById('settings-modal');
 const closeSettings = document.getElementById('close-settings');
 const saveSettingsButton = document.getElementById('save-settings');
-const gameModeSelect = document.getElementById('game-mode');
-const profilePicInput = document.getElementById('profile-pic');
-const colorXInput = document.getElementById('color-x');
-const colorOInput = document.getElementById('color-o');
-const borderColorInput = document.getElementById('border-color');
-const backgroundColorInput = document.getElementById('background-color');
+const createRoomButton = document.getElementById('create-room');
+const joinRoomButton = document.getElementById('join-room');
+const roomModal = document.getElementById('room-modal');
+const closeRoomModal = document.getElementById('close-room');
+const createRoomConfirm = document.getElementById('create-room-confirm');
+const joinRoomConfirm = document.getElementById('join-room-confirm');
+const roomIdInput = document.getElementById('room-id');
+const notifications = document.getElementById('notifications');
 
 let currentPlayer = 'X';
 let boardState = ['', '', '', '', '', '', '', '', ''];
@@ -25,7 +27,7 @@ let settings = {
     backgroundColor: '#ffffff'
 };
 
-// Initialize board
+// Initialize the board
 const initBoard = () => {
     board.innerHTML = '';
     boardState.fill('');
@@ -48,7 +50,7 @@ const handleCellClick = (index) => {
     boardState[index] = currentPlayer;
     renderCell(index);
     checkWinConditions();
-    if (gameActive && aiMode && currentPlayer === 'X') {
+    if (gameActive && aiMode && currentPlayer === 'O') {
         setTimeout(aiMove, 1000);
     }
 };
@@ -94,51 +96,86 @@ const checkWinConditions = () => {
 
 // Announce winner
 const announceWinner = (winner) => {
-    alert(`${winner} wins!`);
+    notifications.innerHTML = `<p>${winner} wins!</p>`;
     gameActive = false;
 };
 
 // Announce draw
 const announceDraw = () => {
-    alert("It's a draw!");
+    notifications.innerHTML = "<p>It's a draw!</p>";
     gameActive = false;
 };
 
 // AI Move
 const aiMove = () => {
-    let availableCells = boardState.map((cell, index) => (cell === '' ? index : null)).filter(cell => cell !== null);
-    let randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
-    if (randomCell !== undefined) {
-        handleCellClick(randomCell);
+    let availableCells = boardState.map((val, index) => (val === '') ? index : null).filter(val => val !== null);
+    if (availableCells.length > 0) {
+        const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+        boardState[randomCell] = currentPlayer;
+        renderCell(randomCell);
+        checkWinConditions();
     }
 };
 
-// Apply settings from inputs
-const applySettings = () => {
-    document.documentElement.style.setProperty('--color-x', settings.colorX);
-    document.documentElement.style.setProperty('--color-o', settings.colorO);
-    document.documentElement.style.setProperty('--border-color', settings.borderColor);
-    document.documentElement.style.setProperty('--background-color', settings.backgroundColor);
-    document.body.style.backgroundColor = settings.backgroundColor;
-};
-
-// Event Listeners
-playAgainButton.addEventListener('click', initBoard);
+// Settings Modal Control
 settingsButton.addEventListener('click', () => {
-    settingsModal.style.display = 'flex';
+    settingsModal.style.display = 'block';
 });
+
 closeSettings.addEventListener('click', () => {
     settingsModal.style.display = 'none';
 });
+
 saveSettingsButton.addEventListener('click', () => {
-    settings.colorX = colorXInput.value;
-    settings.colorO = colorOInput.value;
-    settings.borderColor = borderColorInput.value;
-    settings.backgroundColor = backgroundColorInput.value;
-    profilePic = profilePicInput.value;
+    settings.colorX = document.getElementById('color-x').value;
+    settings.colorO = document.getElementById('color-o').value;
+    settings.borderColor = document.getElementById('border-color').value;
+    settings.backgroundColor = document.getElementById('background-color').value;
     applySettings();
     settingsModal.style.display = 'none';
 });
 
-// Initialize the board on page load
+// Apply Settings
+const applySettings = () => {
+    document.body.style.backgroundColor = settings.backgroundColor;
+    document.documentElement.style.setProperty('--color-x', settings.colorX);
+    document.documentElement.style.setProperty('--color-o', settings.colorO);
+    document.documentElement.style.setProperty('--border-color', settings.borderColor);
+};
+
+// Play Again Button
+playAgainButton.addEventListener('click', () => {
+    initBoard();
+});
+
+// Room Creation
+createRoomButton.addEventListener('click', () => {
+    roomModal.style.display = 'block';
+});
+
+closeRoomModal.addEventListener('click', () => {
+    roomModal.style.display = 'none';
+});
+
+// Create Room
+createRoomConfirm.addEventListener('click', () => {
+    const roomId = roomIdInput.value;
+    if (roomId) {
+        // Here you can implement your room creation logic
+        console.log(`Room ${roomId} created!`);
+        roomModal.style.display = 'none';
+    }
+});
+
+// Join Room
+joinRoomConfirm.addEventListener('click', () => {
+    const roomId = roomIdInput.value;
+    if (roomId) {
+        // Here you can implement your room joining logic
+        console.log(`Joined room ${roomId}!`);
+        roomModal.style.display = 'none';
+    }
+});
+
+// Initialize the game on load
 initBoard();
