@@ -125,73 +125,66 @@ function checkWinner() {
     return false;
 }
 
-// Update rank after a game
+// Show alert message
+function showAlert(message) {
+    alert(message);
+}
+
+// Update rank based on player wins
 function updateRank(winner) {
     if (winner === 'X') {
         rankPoints++;
         if (rankPoints >= 3) {
-            promoteRank();
-        }
-    } else {
-        rankPoints = Math.max(0, rankPoints - 1);
-    }
-    saveRank();
-    document.getElementById('rank').innerText = `Rank: ${rank}`;
-}
-
-// Promote the player's rank
-function promoteRank() {
-    const currentRank = rank.split(" ")[0]; // Get the rank name
-    const currentLevel = ranks[currentRank];
-    const currentIndex = currentLevel.indexOf(rank);
-    
-    if (currentIndex < currentLevel.length - 1) {
-        rank = currentLevel[currentIndex + 1];
-    } else {
-        // If at the last level, increase rank name
-        const nextRank = Object.keys(ranks).find((r) => r === currentRank);
-        if (nextRank) {
-            rank = ranks[nextRank][0]; // Move to the next rank
+            const nextRank = getNextRank();
+            if (nextRank) {
+                rank = nextRank;
+                rankPoints = 0; // Reset points after ranking up
+                saveRank();
+                document.getElementById('rank').innerText = `Rank: ${rank}`;
+            }
         }
     }
-    rankPoints = 0; // Reset points after rank promotion
 }
 
-// Show alert message
-function showAlert(message) {
-    const alert = document.createElement('div');
-    alert.className = 'alert';
-    alert.innerText = message;
-    document.body.appendChild(alert);
-    setTimeout(() => alert.remove(), 3000);
+// Get next rank
+function getNextRank() {
+    for (const [key, value] of Object.entries(ranks)) {
+        const currentIndex = value.indexOf(rank);
+        if (currentIndex !== -1 && currentIndex < value.length - 1) {
+            return value[currentIndex + 1];
+        }
+    }
+    return null;
 }
 
-// Settings Modal Logic
-document.getElementById('settings-button').onclick = () => {
-    document.getElementById('settings-modal').style.display = 'block';
-    document.body.classList.add('blurred'); // Blur the background
+// Event listeners for play again and settings
+document.getElementById('play-again').onclick = () => {
+    init();
 };
 
-document.querySelector('.close').onclick = () => {
-    document.getElementById('settings-modal').style.display = 'none';
-    document.body.classList.remove('blurred'); // Remove blur
+document.getElementById('settings-button').onclick = () => {
+    document.getElementById('settings-modal').style.display = 'block';
 };
 
 document.getElementById('save-settings').onclick = () => {
-    const playerPic = document.getElementById('profile-pic').value;
+    const emoji = document.getElementById('profile-pic').value;
+    if (emoji) {
+        alert(`Profile picture changed to: ${emoji}`);
+        document.getElementById('settings-modal').style.display = 'none';
+    }
+};
 
-    // Set player O emoji
-    document.querySelector('.cell.o').innerText = playerPic;
-
+// Close modal
+document.querySelector('.close').onclick = () => {
     document.getElementById('settings-modal').style.display = 'none';
-    document.body.classList.remove('blurred'); // Remove blur
 };
 
-// Play Again button functionality
-document.getElementById('play-again').onclick = () => {
-    init();
-    document.getElementById('play-again').style.display = 'none'; // Hide play again button
+// Close modal when clicking outside of it
+window.onclick = (event) => {
+    if (event.target === document.getElementById('settings-modal')) {
+        document.getElementById('settings-modal').style.display = 'none';
+    }
 };
 
-// Initialize the game
+// Initialize the game on page load
 init();
