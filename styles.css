@@ -1,103 +1,112 @@
-const board = document.getElementById('board');
-const playAgainButton = document.getElementById('play-again');
-const settingsButton = document.getElementById('settings-button');
-const settingsModal = document.getElementById('settings-modal');
-const closeSettings = document.getElementById('close-settings');
-const saveSettingsButton = document.getElementById('save-settings');
+* {
+    box-sizing: border-box;
+}
 
-let currentPlayer = 'X';
-let boardState = ['', '', '', '', '', '', '', '', ''];
-let gameActive = true;
-let aiMode = false;
-let rankedMode = false;
-let userRank = 'Bronze I'; // Default rank
-let profilePic = '😀';
+body {
+    font-family: 'Titan One', cursive;
+    background-color: var(--background-color);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-// Initialize board
-const initBoard = () => {
-    board.innerHTML = '';
-    boardState.fill('');
-    currentPlayer = 'X';
-    gameActive = true;
+header {
+    background-color: #282c34;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
+}
 
-    for (let i = 0; i < 9; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', () => handleCellClick(i));
-        board.appendChild(cell);
-    }
-};
+h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ffffff;
+}
 
-// Handle cell clicks
-const handleCellClick = (index) => {
-    if (boardState[index] || !gameActive) return;
-    boardState[index] = currentPlayer;
-    renderCell(index);
-    checkWinConditions();
-    if (gameActive && aiMode && currentPlayer === 'X') {
-        setTimeout(aiMove, 1000);
-    }
-};
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #61dafb;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.3s;
+}
 
-// Render cell based on state
-const renderCell = (index) => {
-    const cell = board.children[index];
-    if (currentPlayer === 'X') {
-        cell.innerHTML = `<div class="x-part">X</div>`;
-    } else {
-        cell.innerHTML = `<div class="o"></div>`;
-    }
-    cell.classList.add('clicked');
-};
+button:hover {
+    background-color: #21a1f1;
+    transform: scale(1.05);
+}
 
-// Check for win conditions
-const checkWinConditions = () => {
-    const winningConditions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    margin: 20px;
+}
 
-    for (const condition of winningConditions) {
-        const [a, b, c] = condition;
-        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-            announceWinner(boardState[a]);
-            return;
-        }
-    }
+.cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--border-color);
+    background-color: var(--background-color);
+    font-size: 3rem;
+    color: var(--color-x);
+}
 
-    if (!boardState.includes('')) {
-        announceDraw();
-    } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    }
-};
+.cell.clicked {
+    cursor: not-allowed;
+}
 
-// Announce winner
-const announceWinner = (winner) => {
-    alert(`${winner} wins!`);
-    gameActive = false;
-};
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
 
-// Announce draw
-const announceDraw = () => {
-    alert("It's a draw!");
-    gameActive = false;
-};
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+}
 
-// AI Move
-const aiMove = () => {
-    let availableCells = boardState.map((cell, index) => (cell === '' ? index : null)).filter(cell => cell !== null);
-    let randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
-    if (randomCell !== undefined) {
-        handleCellClick(randomCell);
-    }
-};
+#notifications {
+    margin-top: 20px;
+}
 
-// Event Listeners
-playAgainButton.addEvent
+.x-part {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-x);
+}
+
+.o {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-o);
+    border-radius: 50%;
+    border: 5px solid var(--color-o);
+    width: 80%;
+    height: 80%;
+}
+
