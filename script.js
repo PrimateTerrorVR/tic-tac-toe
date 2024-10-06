@@ -161,7 +161,7 @@ createRoomConfirm.addEventListener('click', () => {
     if (roomId) {
         notifications.innerHTML = `<p>Room ${roomId} created! You can share this ID to invite others.</p>`;
         roomModal.style.display = 'none';
-        initBoard();
+        initBoard(); // Initialize board for new room
     }
 });
 
@@ -171,7 +171,7 @@ joinRoomConfirm.addEventListener('click', () => {
     if (roomId) {
         notifications.innerHTML = `<p>Joined room ${roomId}!</p>`;
         roomModal.style.display = 'none';
-        initBoard();
+        initBoard(); // Initialize board for the joined room
     }
 });
 
