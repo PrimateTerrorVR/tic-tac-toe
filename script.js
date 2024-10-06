@@ -61,7 +61,7 @@ const renderCell = (index) => {
     if (currentPlayer === 'X') {
         cell.innerHTML = `<div class="x-part">X</div>`;
     } else {
-        cell.innerHTML = `<div class="o"></div>`;
+        cell.innerHTML = `<div class="o">O</div>`;
     }
     cell.classList.add('clicked');
 };
@@ -110,72 +110,73 @@ const announceDraw = () => {
 const aiMove = () => {
     let availableCells = boardState.map((val, index) => (val === '') ? index : null).filter(val => val !== null);
     if (availableCells.length > 0) {
-        const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
-        boardState[randomCell] = currentPlayer;
-        renderCell(randomCell);
-        checkWinConditions();
+        const randomIndex = Math.floor(Math.random() * availableCells.length);
+        handleCellClick(availableCells[randomIndex]);
     }
 };
 
-// Settings Modal Control
+// Open settings modal
 settingsButton.addEventListener('click', () => {
     settingsModal.style.display = 'block';
 });
 
+// Close settings modal
 closeSettings.addEventListener('click', () => {
     settingsModal.style.display = 'none';
 });
 
+// Save settings
 saveSettingsButton.addEventListener('click', () => {
     settings.colorX = document.getElementById('color-x').value;
     settings.colorO = document.getElementById('color-o').value;
     settings.borderColor = document.getElementById('border-color').value;
     settings.backgroundColor = document.getElementById('background-color').value;
+    rankedMode = document.getElementById('ranked-mode').checked;
     applySettings();
     settingsModal.style.display = 'none';
 });
 
-// Apply Settings
+// Apply settings to the game
 const applySettings = () => {
-    document.body.style.backgroundColor = settings.backgroundColor;
     document.documentElement.style.setProperty('--color-x', settings.colorX);
     document.documentElement.style.setProperty('--color-o', settings.colorO);
     document.documentElement.style.setProperty('--border-color', settings.borderColor);
+    document.documentElement.style.setProperty('--background-color', settings.backgroundColor);
+    document.body.style.backgroundColor = settings.backgroundColor;
 };
 
-// Play Again Button
-playAgainButton.addEventListener('click', () => {
-    initBoard();
-});
-
-// Room Creation
+// Open room modal
 createRoomButton.addEventListener('click', () => {
     roomModal.style.display = 'block';
 });
 
+// Close room modal
 closeRoomModal.addEventListener('click', () => {
     roomModal.style.display = 'none';
 });
 
-// Create Room
+// Create room
 createRoomConfirm.addEventListener('click', () => {
     const roomId = roomIdInput.value;
     if (roomId) {
-        // Here you can implement your room creation logic
-        console.log(`Room ${roomId} created!`);
+        notifications.innerHTML = `<p>Room ${roomId} created! You can share this ID to invite others.</p>`;
         roomModal.style.display = 'none';
+        initBoard();
     }
 });
 
-// Join Room
+// Join room
 joinRoomConfirm.addEventListener('click', () => {
     const roomId = roomIdInput.value;
     if (roomId) {
-        // Here you can implement your room joining logic
-        console.log(`Joined room ${roomId}!`);
+        notifications.innerHTML = `<p>Joined room ${roomId}!</p>`;
         roomModal.style.display = 'none';
+        initBoard();
     }
 });
 
-// Initialize the game on load
+// Play again
+playAgainButton.addEventListener('click', initBoard);
+
+// Initialize the game
 initBoard();
