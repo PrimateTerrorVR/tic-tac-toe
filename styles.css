@@ -1,16 +1,22 @@
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Titan One', cursive; /* Custom font */
     background-color: #f0f0f0;
-    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
     text-align: center;
 }
 
 .board {
     display: grid;
     grid-template-columns: repeat(3, 100px);
-    grid-gap: 5px;
+    gap: 5px;
     margin: 20px auto;
-    transition: border-radius 0.3s;
 }
 
 .cell {
@@ -19,53 +25,52 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 36px;
-    background-color: #fff;
-    border: 2px solid #ccc;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    border: 2px solid #333;
+    font-size: 40px;
+    position: relative;
 }
 
-.cell.x {
-    color: #f00; /* Red for X */
+.x-part {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid red; /* Color of X */
 }
 
-.cell.o {
-    color: #00f; /* Blue for O */
+.x-part.diagonal {
+    transform: rotate(45deg);
+}
+
+.x-part.second {
+    transform: rotate(-45deg);
+}
+
+.o {
+    width: 60%;
+    height: 60%;
+    border: 4px solid blue; /* Color of O */
+    border-radius: 50%;
 }
 
 .custom-button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #4CAF50; /* Green */
+    background-color: #6200ea;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    margin: 5px;
 }
 
 .custom-button:hover {
-    background-color: #45a049;
-}
-
-.alert {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #f44336; /* Red alert color */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    z-index: 1000;
-    animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+    background-color: #3700b3;
 }
 
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
+    z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -97,22 +102,6 @@ body {
     cursor: pointer;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-/* Curved corners */
-.curved {
-    border-radius: 10px;
-}
-
-/* Sharp corners */
-.sharp {
-    border-radius: 0;
+.blurred {
+    filter: blur(4px);
 }
