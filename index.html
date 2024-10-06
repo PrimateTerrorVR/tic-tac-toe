@@ -3,50 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe Online</title>
+    <title>Tic Tac Toe</title>
     <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Tic Tac Toe Online</h1>
-        <button id="settings-button">Settings</button>
-        <button id="play-again">Play Again</button>
-        <button id="create-room">Create Room</button>
-        <button id="join-room">Join Room</button>
-    </header>
-
-    <main>
-        <div id="board"></div>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
         <div id="notifications"></div>
-    </main>
+        <div id="board" class="board"></div>
+        <button id="play-again" class="custom-button">Play Again</button>
+        <button id="settings-button" class="custom-button">Settings</button>
+        <button id="create-room" class="custom-button">Create Room</button>
+        <button id="join-room" class="custom-button">Join Room</button>
+    </div>
 
+    <!-- Settings Modal -->
     <div id="settings-modal" class="modal">
         <div class="modal-content">
-            <span id="close-settings">&times;</span>
+            <span id="close-settings" class="close">&times;</span>
             <h2>Settings</h2>
-            <label for="profile-pic">Profile Picture (Emoji):</label>
-            <input type="text" id="profile-pic" value="😀"><br>
             <label for="color-x">Color for X:</label>
-            <input type="color" id="color-x" value="#ff0000"><br>
+            <input type="color" id="color-x" value="#ff0000">
             <label for="color-o">Color for O:</label>
-            <input type="color" id="color-o" value="#0000ff"><br>
+            <input type="color" id="color-o" value="#0000ff">
             <label for="border-color">Border Color:</label>
-            <input type="color" id="border-color" value="#000000"><br>
+            <input type="color" id="border-color" value="#000000">
             <label for="background-color">Background Color:</label>
-            <input type="color" id="background-color" value="#ffffff"><br>
-            <button id="save-settings">Save Settings</button>
+            <input type="color" id="background-color" value="#ffffff">
+            <label for="ranked-mode">Ranked Mode:</label>
+            <input type="checkbox" id="ranked-mode">
+            <button id="save-settings" class="custom-button">Save Settings</button>
         </div>
     </div>
 
+    <!-- Room Modal -->
     <div id="room-modal" class="modal">
         <div class="modal-content">
-            <span id="close-room">&times;</span>
+            <span id="close-room" class="close">&times;</span>
             <h2>Create/Join Room</h2>
-            <label for="room-id">Room ID:</label>
-            <input type="text" id="room-id" placeholder="Enter room ID"><br>
-            <button id="create-room-confirm">Create Room</button>
-            <button id="join-room-confirm">Join Room</button>
+            <input type="text" id="room-id" placeholder="Room ID" required>
+            <button id="create-room-confirm" class="custom-button">Create Room</button>
+            <button id="join-room-confirm" class="custom-button">Join Room</button>
         </div>
     </div>
 
