@@ -37,6 +37,7 @@ function init() {
     rankPoints = 0;
     updateBoard();
     document.getElementById('rank').innerText = `Rank: ${rank}`;
+    document.getElementById('play-again').style.display = 'none'; // Hide play again button
 }
 
 // Update board display
@@ -56,12 +57,14 @@ function updateBoard() {
 function handleClick(index) {
     if (board[index] || checkWinner()) return;
     board[index] = currentPlayer;
-    animateMove(index, currentPlayer);
+    drawMove(index, currentPlayer);
     if (checkWinner()) {
         showAlert(`Player ${currentPlayer} wins!`);
         updateRank(currentPlayer);
+        document.getElementById('play-again').style.display = 'block'; // Show play again button
     } else if (board.every(cell => cell)) {
         showAlert('It\'s a draw!');
+        document.getElementById('play-again').style.display = 'block'; // Show play again button
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         if (currentPlayer === 'O' && rankedMode) {
@@ -71,14 +74,20 @@ function handleClick(index) {
     updateBoard();
 }
 
-// Animate move with drawing effect
-function animateMove(index, player) {
+// Draw X or O without animations
+function drawMove(index, player) {
     const cell = document.querySelector(`.cell:nth-child(${index + 1})`);
-    cell.innerText = player;
-    cell.classList.add('animate');
-    setTimeout(() => {
-        cell.classList.remove('animate');
-    }, 300);
+    if (player === 'X') {
+        cell.innerHTML = ''; // Clear cell first
+        setTimeout(() => {
+            cell.innerHTML = '<div class="x-part diagonal"></div>'; // First diagonal
+        }, 0);
+        setTimeout(() => {
+            cell.innerHTML += '<div class="x-part diagonal second"></div>'; // Second diagonal
+        }, 400); // Draw second diagonal after 400ms
+    } else if (player === 'O') {
+        cell.innerHTML = '<div class="o"></div>'; // Draw O directly
+    }
 }
 
 // Bot plays against the player
@@ -86,12 +95,14 @@ function botPlay() {
     const availableSpots = board.map((cell, index) => cell === null ? index : null).filter(index => index !== null);
     const botMove = availableSpots[Math.floor(Math.random() * availableSpots.length)];
     board[botMove] = currentPlayer;
-    animateMove(botMove, currentPlayer);
+    drawMove(botMove, currentPlayer);
     if (checkWinner()) {
         showAlert(`Player ${currentPlayer} wins!`);
         updateRank(currentPlayer);
+        document.getElementById('play-again').style.display = 'block'; // Show play again button
     } else if (board.every(cell => cell)) {
         showAlert('It\'s a draw!');
+        document.getElementById('play-again').style.display = 'block'; // Show play again button
     } else {
         currentPlayer = 'X';
     }
@@ -130,7 +141,6 @@ function updateRank(winner) {
 
 // Promote the player's rank
 function promoteRank() {
-    // Logic to promote rank
     const currentRank = rank.split(" ")[0]; // Get the rank name
     const currentLevel = ranks[currentRank];
     const currentIndex = currentLevel.indexOf(rank);
@@ -159,45 +169,29 @@ function showAlert(message) {
 // Settings Modal Logic
 document.getElementById('settings-button').onclick = () => {
     document.getElementById('settings-modal').style.display = 'block';
+    document.body.classList.add('blurred'); // Blur the background
 };
 
 document.querySelector('.close').onclick = () => {
     document.getElementById('settings-modal').style.display = 'none';
+    document.body.classList.remove('blurred'); // Remove blur
 };
 
 document.getElementById('save-settings').onclick = () => {
-    const boardStyle = document.getElementById('board-style').value;
-    const boardColor = document.getElementById('color').value;
-    const textColor = document.getElementById('text-color').value;
     const playerPic = document.getElementById('profile-pic').value;
-
-    const boardElement = document.getElementById('board');
-    boardElement.style.backgroundColor = boardColor;
-    document.querySelectorAll('.cell').forEach(cell => {
-        cell.style.color = textColor;
-    });
-
-    // Apply board style
-    if (boardStyle === "curved") {
-        boardElement.classList.add('curved');
-        boardElement.classList.remove('sharp');
-    } else {
-        boardElement.classList.add('sharp');
-        boardElement.classList.remove('curved');
-    }
 
     // Set player O emoji
     document.querySelector('.cell.o').innerText = playerPic;
 
     document.getElementById('settings-modal').style.display = 'none';
+    document.body.classList.remove('blurred'); // Remove blur
 };
 
 // Play Again button functionality
 document.getElementById('play-again').onclick = () => {
     init();
-    document.getElementById('play-again').style.display = 'none';
+    document.getElementById('play-again').style.display = 'none'; // Hide play again button
 };
 
 // Initialize the game
 init();
-
