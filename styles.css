@@ -2,6 +2,7 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f0f0;
     color: #333;
+    text-align: center;
 }
 
 .board {
@@ -9,6 +10,7 @@ body {
     grid-template-columns: repeat(3, 100px);
     grid-gap: 5px;
     margin: 20px auto;
+    transition: border-radius 0.3s;
 }
 
 .cell {
@@ -21,6 +23,7 @@ body {
     background-color: #fff;
     border: 2px solid #ccc;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .cell.x {
@@ -29,6 +32,21 @@ body {
 
 .cell.o {
     color: #00f; /* Blue for O */
+}
+
+.custom-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.custom-button:hover {
+    background-color: #45a049;
 }
 
 .alert {
@@ -44,20 +62,39 @@ body {
     animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
 }
 
-.play-again-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50; /* Green */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.play-again-button:hover {
-    background-color: #45a049;
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 @keyframes fadeIn {
@@ -68,4 +105,14 @@ body {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+/* Curved corners */
+.curved {
+    border-radius: 10px;
+}
+
+/* Sharp corners */
+.sharp {
+    border-radius: 0;
 }
