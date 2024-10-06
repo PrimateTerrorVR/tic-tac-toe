@@ -1,161 +1,144 @@
-const board = document.getElementById("board");
-const playAgainButton = document.getElementById("play-again");
-const settingsButton = document.getElementById("settings-button");
-const settingsModal = document.getElementById("settings-modal");
-const closeButton = document.getElementById("close-settings");
-const saveSettingsButton = document.getElementById("save-settings");
-const cells = Array.from(Array(9).keys());
+const board = document.getElementById('board');
+const playAgainButton = document.getElementById('play-again');
+const settingsButton = document.getElementById('settings-button');
+const settingsModal = document.getElementById('settings-modal');
+const closeSettings = document.getElementById('close-settings');
+const saveSettingsButton = document.getElementById('save-settings');
+const gameModeSelect = document.getElementById('game-mode');
+const profilePicInput = document.getElementById('profile-pic');
+const colorXInput = document.getElementById('color-x');
+const colorOInput = document.getElementById('color-o');
+const borderColorInput = document.getElementById('border-color');
+const backgroundColorInput = document.getElementById('background-color');
+
 let currentPlayer = 'X';
+let boardState = ['', '', '', '', '', '', '', '', ''];
 let gameActive = true;
-let boardState = ["", "", "", "", "", "", "", "", ""];
-let gameMode = "ai-normal";
-let profilePic = "😀"; // Default profile picture
-let animationStyle = "none"; // Default animation style
-let colorX = "#3f51b5"; // Default color for X
-let colorO = "#3f51b5"; // Default color for O
-let borderColor = "#3f51b5"; // Default border color
-let backgroundColor = "#f0f0f0"; // Default background color
+let aiMode = false;
+let rankedMode = false;
+let userRank = 'Bronze I'; // Default rank
+let profilePic = '😀';
+let settings = {
+    colorX: '#ff0000',
+    colorO: '#0000ff',
+    borderColor: '#000000',
+    backgroundColor: '#ffffff'
+};
 
-// Create the board
-cells.forEach((cell, index) => {
-    const cellElement = document.createElement("div");
-    cellElement.classList.add("cell");
-    cellElement.dataset.index = index;
-    cellElement.addEventListener("click", handleCellClick);
-    board.appendChild(cellElement);
-});
+// Initialize board
+const initBoard = () => {
+    board.innerHTML = '';
+    boardState.fill('');
+    currentPlayer = 'X';
+    gameActive = true;
 
-// Handle cell click
-function handleCellClick(event) {
-    const cell = event.target;
-    const index = cell.dataset.index;
-
-    if (boardState[index] !== "" || !gameActive) return;
-
-    boardState[index] = currentPlayer;
-
-    // Update the cell content based on the current player
-    if (currentPlayer === 'X') {
-        cell.innerHTML = `<div class="x-part"></div>`;
-        cell.querySelector(".x-part").style.borderColor = colorX; // Use the selected color
-    } else {
-        cell.innerHTML = `<div class="o"></div>`;
-        cell.querySelector(".o").style.borderColor = colorO; // Use the selected color
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.addEventListener('click', () => handleCellClick(i));
+        board.appendChild(cell);
     }
 
-    cell.classList.add("clicked");
+    applySettings();
+};
 
-    checkWinner();
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-}
+// Handle cell clicks
+const handleCellClick = (index) => {
+    if (boardState[index] || !gameActive) return;
+    boardState[index] = currentPlayer;
+    renderCell(index);
+    checkWinConditions();
+    if (gameActive && aiMode && currentPlayer === 'X') {
+        setTimeout(aiMove, 1000);
+    }
+};
 
-// Check for a winner
-function checkWinner() {
+// Render cell based on state
+const renderCell = (index) => {
+    const cell = board.children[index];
+    if (currentPlayer === 'X') {
+        cell.innerHTML = `<div class="x-part">X</div>`;
+    } else {
+        cell.innerHTML = `<div class="o"></div>`;
+    }
+    cell.classList.add('clicked');
+};
+
+// Check for win conditions
+const checkWinConditions = () => {
     const winningConditions = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
     ];
+
     for (const condition of winningConditions) {
         const [a, b, c] = condition;
         if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-            gameActive = false;
-            alert(`${boardState[a]} Wins!`);
+            announceWinner(boardState[a]);
             return;
         }
     }
-    if (!boardState.includes("")) {
-        gameActive = false;
-        alert("It's a Draw!");
+
+    if (!boardState.includes('')) {
+        announceDraw();
+    } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     }
-}
-
-// Reset the game
-function resetGame() {
-    boardState = ["", "", "", "", "", "", "", "", ""];
-    gameActive = true;
-    currentPlayer = 'X';
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach(cell => {
-        cell.innerHTML = '';
-        cell.classList.remove("clicked");
-    });
-}
-
-// Play Again button event listener
-playAgainButton.addEventListener("click", resetGame);
-
-// Settings button event listener
-settingsButton.addEventListener("click", () => {
-    settingsModal.style.display = "block";
-});
-
-// Close settings modal
-closeButton.addEventListener("click", () => {
-    settingsModal.style.display = "none";
-});
-
-// Save settings
-saveSettingsButton.addEventListener("click", () => {
-    profilePic = document.getElementById("profile-pic").value;
-    gameMode = document.getElementById("game-mode").value;
-    colorX = document.getElementById("color-x").value;
-    colorO = document.getElementById("color-o").value;
-    borderColor = document.getElementById("border-color").value;
-    backgroundColor = document.getElementById("background-color").value;
-
-    // Update styles
-    document.documentElement.style.setProperty('--color-x', colorX);
-    document.documentElement.style.setProperty('--color-o', colorO);
-    document.documentElement.style.setProperty('--border-color', borderColor);
-    document.body.style.backgroundColor = backgroundColor;
-
-    settingsModal.style.display = "none";
-});
-
-// Close modal if clicked outside
-window.addEventListener("click", (event) => {
-    if (event.target === settingsModal) {
-        settingsModal.style.display = "none";
-    }
-});
-
-// Load previous settings from localStorage
-window.onload = function() {
-    const savedProfilePic = localStorage.getItem("profilePic");
-    const savedGameMode = localStorage.getItem("gameMode");
-    const savedColorX = localStorage.getItem("colorX");
-    const savedColorO = localStorage.getItem("colorO");
-    const savedBorderColor = localStorage.getItem("borderColor");
-    const savedBackgroundColor = localStorage.getItem("backgroundColor");
-
-    if (savedProfilePic) profilePic = savedProfilePic;
-    if (savedGameMode) gameMode = savedGameMode;
-    if (savedColorX) colorX = savedColorX;
-    if (savedColorO) colorO = savedColorO;
-    if (savedBorderColor) borderColor = savedBorderColor;
-    if (savedBackgroundColor) backgroundColor = savedBackgroundColor;
-
-    document.getElementById("profile-pic").value = profilePic;
-    document.getElementById("game-mode").value = gameMode;
-    document.getElementById("color-x").value = colorX;
-    document.getElementById("color-o").value = colorO;
-    document.getElementById("border-color").value = borderColor;
-    document.getElementById("background-color").value = backgroundColor;
-    
-    // Apply loaded styles
-    document.documentElement.style.setProperty('--color-x', colorX);
-    document.documentElement.style.setProperty('--color-o', colorO);
-    document.documentElement.style.setProperty('--border-color', borderColor);
-    document.body.style.backgroundColor = backgroundColor;
 };
 
-// Save settings to localStorage
-window.addEventListener("beforeunload", () => {
-    localStorage.setItem("profilePic", profilePic);
-    localStorage.setItem("gameMode", gameMode);
-    localStorage.setItem("colorX", colorX);
-    localStorage.setItem("colorO", colorO);
-    localStorage.setItem("borderColor", borderColor);
-    localStorage.setItem("backgroundColor", backgroundColor);
+// Announce winner
+const announceWinner = (winner) => {
+    alert(`${winner} wins!`);
+    gameActive = false;
+};
+
+// Announce draw
+const announceDraw = () => {
+    alert("It's a draw!");
+    gameActive = false;
+};
+
+// AI Move
+const aiMove = () => {
+    let availableCells = boardState.map((cell, index) => (cell === '' ? index : null)).filter(cell => cell !== null);
+    let randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+    if (randomCell !== undefined) {
+        handleCellClick(randomCell);
+    }
+};
+
+// Apply settings from inputs
+const applySettings = () => {
+    document.documentElement.style.setProperty('--color-x', settings.colorX);
+    document.documentElement.style.setProperty('--color-o', settings.colorO);
+    document.documentElement.style.setProperty('--border-color', settings.borderColor);
+    document.documentElement.style.setProperty('--background-color', settings.backgroundColor);
+    document.body.style.backgroundColor = settings.backgroundColor;
+};
+
+// Event Listeners
+playAgainButton.addEventListener('click', initBoard);
+settingsButton.addEventListener('click', () => {
+    settingsModal.style.display = 'flex';
 });
+closeSettings.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
+});
+saveSettingsButton.addEventListener('click', () => {
+    settings.colorX = colorXInput.value;
+    settings.colorO = colorOInput.value;
+    settings.borderColor = borderColorInput.value;
+    settings.backgroundColor = backgroundColorInput.value;
+    profilePic = profilePicInput.value;
+    applySettings();
+    settingsModal.style.display = 'none';
+});
+
+// Initialize the board on page load
+initBoard();
