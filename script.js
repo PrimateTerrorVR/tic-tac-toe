@@ -1,187 +1,161 @@
-let board;
-let currentPlayer;
-let rankedMode;
-let rank;
-let rankPoints;
-const botDelay = 1000; // Delay for bot move
+const board = document.getElementById("board");
+const playAgainButton = document.getElementById("play-again");
+const settingsButton = document.getElementById("settings-button");
+const settingsModal = document.getElementById("settings-modal");
+const closeButton = document.getElementById("close-settings");
+const saveSettingsButton = document.getElementById("save-settings");
+const cells = Array.from(Array(9).keys());
+let currentPlayer = 'X';
+let gameActive = true;
+let boardState = ["", "", "", "", "", "", "", "", ""];
+let gameMode = "ai-normal";
+let profilePic = "😀"; // Default profile picture
+let animationStyle = "none"; // Default animation style
+let colorX = "#3f51b5"; // Default color for X
+let colorO = "#3f51b5"; // Default color for O
+let borderColor = "#3f51b5"; // Default border color
+let backgroundColor = "#f0f0f0"; // Default background color
 
-// Ranks setup
-const ranks = {
-    Bronze: ['Bronze I', 'Bronze II', 'Bronze III'],
-    Silver: ['Silver I', 'Silver II', 'Silver III'],
-    Gold: ['Gold I', 'Gold II', 'Gold III'],
-    Platinum: ['Platinum I', 'Platinum II', 'Platinum III'],
-    Diamond: ['Diamond I', 'Diamond II', 'Diamond III'],
-    Elite: ['Elite'],
-    Champion: ['Champion'],
-    Unreal: ['Unreal']
-};
-
-// Load saved rank from local storage
-function loadRank() {
-    const savedRank = localStorage.getItem('rank');
-    rank = savedRank ? savedRank : ranks.Bronze[0]; // Default to Bronze I
-}
-
-// Save rank to local storage
-function saveRank() {
-    localStorage.setItem('rank', rank);
-}
-
-// Initialize the game
-function init() {
-    loadRank();
-    board = Array(9).fill(null);
-    currentPlayer = 'X';
-    rankedMode = false;
-    rankPoints = 0;
-    updateBoard();
-    document.getElementById('rank').innerText = `Rank: ${rank}`;
-    document.getElementById('play-again').style.display = 'none'; // Hide play again button
-    document.getElementById('settings-modal').style.display = 'none'; // Hide settings
-    document.getElementById('online-status').innerText = ''; // Reset online status
-}
-
-// Update board display
-function updateBoard() {
-    const boardElement = document.getElementById('board');
-    boardElement.innerHTML = '';
-    board.forEach((cell, index) => {
-        const cellElement = document.createElement('div');
-        cellElement.className = `cell ${cell ? cell.toLowerCase() : ''}`;
-        cellElement.onclick = () => handleClick(index, cellElement);
-        boardElement.appendChild(cellElement);
-    });
-    document.getElementById('status').innerText = `Current Player: ${currentPlayer}`;
-}
+// Create the board
+cells.forEach((cell, index) => {
+    const cellElement = document.createElement("div");
+    cellElement.classList.add("cell");
+    cellElement.dataset.index = index;
+    cellElement.addEventListener("click", handleCellClick);
+    board.appendChild(cellElement);
+});
 
 // Handle cell click
-function handleClick(index, cellElement) {
-    if (board[index] || checkWinner()) return;
+function handleCellClick(event) {
+    const cell = event.target;
+    const index = cell.dataset.index;
 
-    board[index] = currentPlayer;
-    cellElement.classList.add('clicked'); // Add clicked class for border
-    drawMove(index, currentPlayer);
+    if (boardState[index] !== "" || !gameActive) return;
 
-    if (checkWinner()) {
-        showAlert(`Player ${currentPlayer} wins!`);
-        updateRank(currentPlayer);
-        document.getElementById('play-again').style.display = 'block'; // Show play again button
-    } else if (board.every(cell => cell)) {
-        showAlert('It\'s a draw!');
-        document.getElementById('play-again').style.display = 'block'; // Show play again button
+    boardState[index] = currentPlayer;
+
+    // Update the cell content based on the current player
+    if (currentPlayer === 'X') {
+        cell.innerHTML = `<div class="x-part"></div>`;
+        cell.querySelector(".x-part").style.borderColor = colorX; // Use the selected color
     } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        if (currentPlayer === 'O' && rankedMode) {
-            setTimeout(() => {
-                showThinkingMessage(); // Show thinking message for bot
-                botPlay();
-            }, botDelay);
-        }
+        cell.innerHTML = `<div class="o"></div>`;
+        cell.querySelector(".o").style.borderColor = colorO; // Use the selected color
     }
-    updateBoard();
+
+    cell.classList.add("clicked");
+
+    checkWinner();
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 }
 
-// Draw X or O without animations
-function drawMove(index, player) {
-    const cell = document.querySelector(`.cell:nth-child(${index + 1})`);
-    if (player === 'X') {
-        cell.innerHTML = '<div class="x-part"></div>'; // Draw X
-    } else if (player === 'O') {
-        cell.innerHTML = '<div class="o"></div>'; // Draw O
-    }
-}
-
-// Show thinking message for bot
-function showThinkingMessage() {
-    const statusElement = document.getElementById('status');
-    statusElement.innerText = 'Bot is thinking...'; // Update status message
-    setTimeout(() => {
-        statusElement.innerText = `Current Player: ${currentPlayer}`; // Reset after delay
-    }, 1000);
-}
-
-// Bot plays a move
-function botPlay() {
-    const emptyCells = board.map((cell, index) => (cell === null ? index : null)).filter(val => val !== null);
-    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    handleClick(randomIndex, document.querySelector(`.cell:nth-child(${randomIndex + 1})`));
-}
-
-// Check for winner
+// Check for a winner
 function checkWinner() {
-    const winningCombinations = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
+    const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6],
     ];
-    for (const combination of winningCombinations) {
-        const [a, b, c] = combination;
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-            return true;
+    for (const condition of winningConditions) {
+        const [a, b, c] = condition;
+        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+            gameActive = false;
+            alert(`${boardState[a]} Wins!`);
+            return;
         }
     }
-    return false;
-}
-
-// Show alert message
-function showAlert(message) {
-    alert(message);
-}
-
-// Update rank based on player wins
-function updateRank(winner) {
-    if (winner === 'X') {
-        rankPoints++;
-        if (rankPoints >= 3) {
-            const nextRank = getNextRank();
-            if (nextRank) {
-                rank = nextRank;
-                rankPoints = 0; // Reset points after ranking up
-                saveRank();
-                document.getElementById('rank').innerText = `Rank: ${rank}`;
-            }
-        }
+    if (!boardState.includes("")) {
+        gameActive = false;
+        alert("It's a Draw!");
     }
 }
 
-// Get next rank
-function getNextRank() {
-    for (const [key, value] of Object.entries(ranks)) {
-        const currentIndex = value.indexOf(rank);
-        if (currentIndex !== -1 && currentIndex < value.length - 1) {
-            return value[currentIndex + 1];
-        }
-    }
-    return null;
+// Reset the game
+function resetGame() {
+    boardState = ["", "", "", "", "", "", "", "", ""];
+    gameActive = true;
+    currentPlayer = 'X';
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.innerHTML = '';
+        cell.classList.remove("clicked");
+    });
 }
 
-// Event listeners for play again and settings
-document.getElementById('play-again').onclick = () => {
-    init();
-};
+// Play Again button event listener
+playAgainButton.addEventListener("click", resetGame);
 
-document.getElementById('settings-button').onclick = () => {
-    document.getElementById('settings-modal').style.display = 'block';
-    // Removed blur effect on settings
-};
+// Settings button event listener
+settingsButton.addEventListener("click", () => {
+    settingsModal.style.display = "block";
+});
 
-document.getElementById('save-settings').onclick = () => {
-    const emoji = document.getElementById('profile-pic').value;
-    const gameMode = document.getElementById('game-mode').value;
-    rankedMode = gameMode === 'ai-ranked';
+// Close settings modal
+closeButton.addEventListener("click", () => {
+    settingsModal.style.display = "none";
+});
 
-    if (emoji) {
-        alert(`Profile picture changed to: ${emoji}`);
+// Save settings
+saveSettingsButton.addEventListener("click", () => {
+    profilePic = document.getElementById("profile-pic").value;
+    gameMode = document.getElementById("game-mode").value;
+    colorX = document.getElementById("color-x").value;
+    colorO = document.getElementById("color-o").value;
+    borderColor = document.getElementById("border-color").value;
+    backgroundColor = document.getElementById("background-color").value;
+
+    // Update styles
+    document.documentElement.style.setProperty('--color-x', colorX);
+    document.documentElement.style.setProperty('--color-o', colorO);
+    document.documentElement.style.setProperty('--border-color', borderColor);
+    document.body.style.backgroundColor = backgroundColor;
+
+    settingsModal.style.display = "none";
+});
+
+// Close modal if clicked outside
+window.addEventListener("click", (event) => {
+    if (event.target === settingsModal) {
+        settingsModal.style.display = "none";
     }
+});
 
-    document.getElementById('settings-modal').style.display = 'none';
+// Load previous settings from localStorage
+window.onload = function() {
+    const savedProfilePic = localStorage.getItem("profilePic");
+    const savedGameMode = localStorage.getItem("gameMode");
+    const savedColorX = localStorage.getItem("colorX");
+    const savedColorO = localStorage.getItem("colorO");
+    const savedBorderColor = localStorage.getItem("borderColor");
+    const savedBackgroundColor = localStorage.getItem("backgroundColor");
+
+    if (savedProfilePic) profilePic = savedProfilePic;
+    if (savedGameMode) gameMode = savedGameMode;
+    if (savedColorX) colorX = savedColorX;
+    if (savedColorO) colorO = savedColorO;
+    if (savedBorderColor) borderColor = savedBorderColor;
+    if (savedBackgroundColor) backgroundColor = savedBackgroundColor;
+
+    document.getElementById("profile-pic").value = profilePic;
+    document.getElementById("game-mode").value = gameMode;
+    document.getElementById("color-x").value = colorX;
+    document.getElementById("color-o").value = colorO;
+    document.getElementById("border-color").value = borderColor;
+    document.getElementById("background-color").value = backgroundColor;
+    
+    // Apply loaded styles
+    document.documentElement.style.setProperty('--color-x', colorX);
+    document.documentElement.style.setProperty('--color-o', colorO);
+    document.documentElement.style.setProperty('--border-color', borderColor);
+    document.body.style.backgroundColor = backgroundColor;
 };
 
-// Initialize the game on page load
-init();
+// Save settings to localStorage
+window.addEventListener("beforeunload", () => {
+    localStorage.setItem("profilePic", profilePic);
+    localStorage.setItem("gameMode", gameMode);
+    localStorage.setItem("colorX", colorX);
+    localStorage.setItem("colorO", colorO);
+    localStorage.setItem("borderColor", borderColor);
+    localStorage.setItem("backgroundColor", backgroundColor);
+});
