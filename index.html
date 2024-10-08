@@ -1,15 +1,17 @@
-r<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <title>Tic Tac Toe</title>
+    <title>Tic Tac Toe - Remake</title>
 </head>
 <body>
     <div class="container">
         <h1>Tic Tac Toe</h1>
+
+        <!-- Game Board -->
         <div class="board" id="board">
             <div class="cell" id="0"></div>
             <div class="cell" id="1"></div>
@@ -21,8 +23,14 @@ r<!DOCTYPE html>
             <div class="cell" id="7"></div>
             <div class="cell" id="8"></div>
         </div>
+
+        <!-- Play Again Button -->
         <button id="playAgain" class="custom-button">Play Again</button>
+
+        <!-- Notifications (Win, Draw, etc.) -->
         <div id="notifications"></div>
+
+        <!-- Settings -->
         <div id="settings">
             <h2>Settings</h2>
             <label for="aiMode">AI Mode:</label>
@@ -30,19 +38,26 @@ r<!DOCTYPE html>
                 <option value="normal">Normal</option>
                 <option value="hard">Hard</option>
             </select>
+
             <label for="boardStyle">Board Style:</label>
             <select id="boardStyle">
                 <option value="curved">Curved</option>
                 <option value="straight">Straight</option>
             </select>
+
             <label for="backgroundColor">Background Color:</label>
             <input type="color" id="backgroundColor" value="#e0e0e0">
+
             <label for="textColor">Text Color:</label>
             <input type="color" id="textColor" value="#333333">
+
+            <!-- Save and Reset Buttons -->
             <button id="saveSettings" class="custom-button">Save Settings</button>
             <button id="resetSettings" class="custom-button">Reset to Default</button>
         </div>
     </div>
+    
+    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
